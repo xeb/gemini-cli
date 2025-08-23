@@ -16,6 +16,9 @@ import {
 import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
 import { DEFAULT_GEMINI_MODEL } from '../config/models.js';
 import { Config } from '../config/config.js';
+import fs from 'fs';
+import path from 'path';
+import fetch from 'node-fetch';
 
 import { UserTierId } from '../code_assist/types.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
@@ -144,6 +147,11 @@ export async function createContentGenerator(
       };
     }
     const httpOptions = { headers };
+
+    if (process.env['GEMINI_CLI_BASE_URL']) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (httpOptions as any).baseUrl = process.env['GEMINI_CLI_BASE_URL'];
+    }
 
     const googleGenAI = new GoogleGenAI({
       apiKey: config.apiKey === '' ? undefined : config.apiKey,
